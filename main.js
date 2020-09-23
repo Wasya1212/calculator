@@ -5,7 +5,12 @@ class CalculatorConstructor extends Calculator {
     _container; // calculator container element
 
     _createControlButton(name, onClick = () => {}) {
-        let newControlButton = document.createElement('button');
+        const newControlButton = document.createElement('button');
+
+        newControlButton.textContent = name.toString();
+        newControlButton.addEventListener('click');
+
+        return newControlButton;
     }
 
     _createOperationsContainer() {
