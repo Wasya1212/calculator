@@ -46,6 +46,43 @@ class Calculator {
         
     }
 
+    static breakForOperations(query, maxNestingLevel) {
+        let breakedQueryString = query;
+
+        const calculations = [];
+
+        let openBracketsWathcer = 0;
+        let closeBracketsWathcer = 0;
+        let lastBracketsIndex = 0;
+        let firstBracketsIndex = 0;
+
+        console.log(query);
+
+        [...query].forEach((char, index) => {
+            if (char === '(') {
+                openBracketsWathcer++;
+                if (openBracketsWathcer === maxNestingLevel) firstBracketsIndex = index;
+            }
+            if (char === ')') {
+                closeBracketsWathcer++;
+                if (closeBracketsWathcer === 1) lastBracketsIndex = index;
+            }
+            if (closeBracketsWathcer === maxNestingLevel) {
+                calculations.push(query.substring(firstBracketsIndex, lastBracketsIndex + 1));
+            }
+            if (closeBracketsWathcer === openBracketsWathcer) {
+                openBracketsWathcer = 0;
+                closeBracketsWathcer = 0;
+                firstBracketsIndex = 0;
+                lastBracketsIndex = 0;
+            }
+        });
+
+        console.log(calculations);
+
+        return breakedQueryString;
+    }
+
     static getMaxNestingLevel(query) {
         let currentMaxLevel = 0;
         let queryMap = "";
@@ -77,6 +114,8 @@ class Calculator {
         }
 
         let maxNestingLevel = Calculator.getMaxNestingLevel(this._query);
+
+        Calculator.breakForOperations(this._query, maxNestingLevel);
 
         return maxNestingLevel;
     }

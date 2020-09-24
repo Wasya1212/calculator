@@ -37,6 +37,9 @@ class CalculatorBuilder extends Calculator {
         
         displayContainerElement.classList.add('calculator-display-container');
         displayContainerElement.appendChild(displayElement);
+
+        displayElement.value = "22 + (54 * (65 - 11 * (23 - 1))) / 90 - (35 - 12) * (68 + 22 / (2 + 5)) + (10 * (120 / 23 * (11 + 4 / (378 + 21))))";
+        this._query = "22 + (54 * (65 - 11 * (23 - 1))) / 90 - (35 - 12) * (68 + 22 / (2 + 5)) + (10 * (120 / 23 * (11 + 4 / (378 + 21))))";
         this._queryElement = displayElement;
 
         return displayContainerElement;
