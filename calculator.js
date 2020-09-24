@@ -39,6 +39,8 @@ class Calculator {
     calculate() {
         const operations = [];
 
-        return 0;
+        console.log(this._query);
+
+        return "Єргш";
     }
 }

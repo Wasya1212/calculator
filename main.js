@@ -3,6 +3,7 @@ class CalculatorBuilder extends Calculator {
     _operationButtonElements = new Map(); // operations buttons
 
     _containerElement; // calculator container element
+    _queryElement; // display input element
 
     _createControlButton(name, onClick = () => {}) {
         const controlButtonElement = document.createElement('button');
@@ -30,32 +31,47 @@ class CalculatorBuilder extends Calculator {
         return numbersContainerElement;
     }
 
+    _createDisplay() {
+        const displayContainerElement = document.createElement('div');
+        const displayElement = document.createElement('input');
+        
+        displayContainerElement.classList.add('calculator-display-container');
+        displayContainerElement.appendChild(displayElement);
+        this._queryElement = displayElement;
+
+        return displayContainerElement;
+    }
+
     _createDefaultNumberButtons() {
         Array.from(Array(10).keys()).forEach(numKey => {
             this._numberButtonElements.set(
                 numKey.toString(),
                 this._createControlButton(numKey, e => {
-                    alert();
+                    this._queryElement.value += numKey;
                 })
             );
         });
     }
 
     _createDefaultOperationButtons() {
-        this._operationButtonElements.set('+', this._createControlButton('+', e => {
-            alert();
-        }));
-        this._operationButtonElements.set('-', this._createControlButton('-', e => {
-            alert();
-        }));
-        this._operationButtonElements.set('*', this._createControlButton('*', e => {
-            alert();
-        }));
-        this._operationButtonElements.set('/', this._createControlButton('/', e => {
-            alert();
-        }));
+        ['(', ')'].forEach(btn => {
+            this._operationButtonElements.set(btn, this._createControlButton(btn, e => {
+                this._queryElement.value += btn;
+            }));
+        });
+        
+        ['+', '-', '*', '/'].forEach((opBtn, _, opersArr) => {
+            this._operationButtonElements.set(opBtn, this._createControlButton(opBtn, e => {
+                const currentQuery = this._queryElement.value;
+
+                currentQuery !== "" && opersArr.includes(currentQuery.substr(-1))
+                    ? this._queryElement.value = currentQuery.substr(0, currentQuery.length - opBtn.length) + opBtn
+                    : this._queryElement.value += opBtn;
+            }));
+        });
+
         this._operationButtonElements.set('=', this._createControlButton('=', e => {
-            alert();
+            this._queryElement.value = this.calculate();
         }));
     }
 
@@ -82,18 +98,27 @@ class CalculatorBuilder extends Calculator {
     }
 
     init() {
-        const numbersContainerElement = this._createNumbersContainer();
-        
-        for (let btn of this._numberButtonElements.values()) {
-            numbersContainerElement.appendChild(btn);
-        }
+        this.clear();
 
+        const displayContainerElement = this._createDisplay();
+        const numbersContainerElement = this._createNumbersContainer();
         const operationsContainerElement = this._createOperationsContainer();
 
+        for (let btn of this._numberButtonElements.values()) {
+            btn.addEventListener('click', () => {
+                this._query = this._queryElement.value;
+            });
+            numbersContainerElement.appendChild(btn);
+        }        
+
         for (let btn of this._operationButtonElements.values()) {
+            btn.addEventListener('click', () => {
+                this._query = this._queryElement.value;
+            });
             operationsContainerElement.appendChild(btn);
         }
 
+        this._containerElement.appendChild(displayContainerElement);
         this._containerElement.appendChild(numbersContainerElement);
         this._containerElement.appendChild(operationsContainerElement);
     }
