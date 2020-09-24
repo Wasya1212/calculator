@@ -18,13 +18,23 @@ class Calculator {
         console.log("divide counts...");
     }
 
+    _pow() {
+
+    }
+
+    _sqrt() {
+
+    }
+
     constructor(query = "") {
         this._query = query;
         this._operations = {
             add: this._add,
             multiply: this._multiply,
             substract: this._substract,
-            divide: this._divide
+            divide: this._divide,
+            add: this._pow,
+            multiply: this._sqrt
         };
     }
 
@@ -36,11 +46,38 @@ class Calculator {
         
     }
 
+    static getMaxNestingLevel(query) {
+        let currentMaxLevel = 0;
+        let queryMap = "";
+
+        Array.from(query).forEach(char => {
+            if (char === '(') {
+                queryMap += '(';
+            }
+            if (char === ')') {
+                if (currentMaxLevel < queryMap.length) {
+                    currentMaxLevel = queryMap.length;
+                }
+                queryMap = "";
+            }
+        });
+
+        return currentMaxLevel;
+    }
+
     calculate() {
-        const operations = [];
+        const bracketOpenCount = [...this._query].filter(c => c ==='(').length;
+        const bracketCloseCount = [...this._query].filter(c => c === ')').length;
 
-        console.log(this._query);
+        console.log(bracketOpenCount);
+        console.log(bracketCloseCount);
 
-        return "Єргш";
+        if (bracketOpenCount !== bracketCloseCount) {
+            throw new Error("Wrong calculating query! Problem is in '(' or ')...");
+        }
+
+        let maxNestingLevel = Calculator.getMaxNestingLevel(this._query);
+
+        return maxNestingLevel;
     }
 }
