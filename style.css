@@ -1,0 +1,11 @@
+.error {
+    padding: 1rem 2rem;
+    border: 2px solid red;
+    border-radius: 5px;
+    color: red;
+    margin: 1rem 0;
+}
+
+.hidden {
+    display: none;
+}

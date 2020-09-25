@@ -46,41 +46,60 @@ class Calculator {
         
     }
 
-    static breakForOperations(query, maxNestingLevel) {
-        let breakedQueryString = query;
+    static breakForOperations(query) {
+        const calculateOperations = [];
+        
+        calculateOperations.push(getOperations(query));
 
-        const calculations = [];
+        function getOperations(query) {
+            let maxNestingLevel = Calculator.getMaxNestingLevel(query);
+            let levelID = `%%${maxNestingLevel}%%`;
 
-        let openBracketsWathcer = 0;
-        let closeBracketsWathcer = 0;
-        let lastBracketsIndex = 0;
-        let firstBracketsIndex = 0;
+            let breakedQueryString = query;
 
-        console.log(query);
+            const calculations = [];
 
-        [...query].forEach((char, index) => {
-            if (char === '(') {
-                openBracketsWathcer++;
-                if (openBracketsWathcer === maxNestingLevel) firstBracketsIndex = index;
-            }
-            if (char === ')') {
-                closeBracketsWathcer++;
-                if (closeBracketsWathcer === 1) lastBracketsIndex = index;
-            }
-            if (closeBracketsWathcer === maxNestingLevel) {
-                calculations.push(query.substring(firstBracketsIndex, lastBracketsIndex + 1));
-            }
-            if (closeBracketsWathcer === openBracketsWathcer) {
-                openBracketsWathcer = 0;
-                closeBracketsWathcer = 0;
-                firstBracketsIndex = 0;
-                lastBracketsIndex = 0;
-            }
-        });
+            let openBracketsWathcer = 0;
+            let closeBracketsWathcer = 0;
+            let lastBracketsIndex = 0;
+            let firstBracketsIndex = 0;
+            let differenceBetweenParsed = 0;
 
-        console.log(calculations);
+            console.log(query);
 
-        return breakedQueryString;
+            [...query].forEach((char, index) => {
+                if (char === '(') {
+                    openBracketsWathcer++;
+                    if (openBracketsWathcer === maxNestingLevel) firstBracketsIndex = index;
+                }
+                if (char === ')') {
+                    closeBracketsWathcer++;
+                    if (closeBracketsWathcer === 1) lastBracketsIndex = index;
+                }
+                if (closeBracketsWathcer === maxNestingLevel) {
+                    calculations.push(query.substring(firstBracketsIndex, lastBracketsIndex + 1));
+                    breakedQueryString = (
+                        breakedQueryString.substring(0, firstBracketsIndex - differenceBetweenParsed)
+                        + levelID
+                        + breakedQueryString.substring(lastBracketsIndex + 1 - differenceBetweenParsed, breakedQueryString.length - 1)
+                    );
+                    differenceBetweenParsed = query.length - breakedQueryString.length;
+                    console.log("s", differenceBetweenParsed)
+                }
+                if (closeBracketsWathcer === openBracketsWathcer) {
+                    openBracketsWathcer = 0;
+                    closeBracketsWathcer = 0;
+                    firstBracketsIndex = 0;
+                    lastBracketsIndex = 0;
+                }
+            });
+
+            return { calculations, breakedQueryString };
+        }
+
+        console.log(calculateOperations);
+
+        return calculateOperations;
     }
 
     static getMaxNestingLevel(query) {
@@ -113,10 +132,8 @@ class Calculator {
             throw new Error("Wrong calculating query! Problem is in '(' or ')...");
         }
 
-        let maxNestingLevel = Calculator.getMaxNestingLevel(this._query);
+        // Calculator.breakForOperations(this._query);
 
-        Calculator.breakForOperations(this._query, maxNestingLevel);
-
-        return maxNestingLevel;
+        return eval(this._query);
     }
 }
